@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 
 //Pages
@@ -16,7 +16,7 @@ const theme = createMuiTheme({
   palette: {
     primary: {
       light: '#cfd8dc',
-      main: '#78909c',
+      main: '#205',
       dark: '#263238',
       contrastText: '#fff'
     },
@@ -24,9 +24,12 @@ const theme = createMuiTheme({
       light: '#fbe9e7',
       main: '#ffb74d',
       dark: '#bf360c',
-      text: '#fff'
+      contrastText: '#bdbdbd'
     }
   },
+  typography: {
+    useNextVariants: true
+  }
 
 })
 
@@ -36,7 +39,7 @@ function App() {
       <div className="App">
         <Router>
           <Navbar />
-          <div class="container">
+          <div className="container">
             <Switch>
               <Route exact path='/' component={home} />
               <Route exact path='/login' component={login} />
