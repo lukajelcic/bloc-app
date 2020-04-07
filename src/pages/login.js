@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
-import withStyles from '@material-ui/core/styles/withStyles';
 import PropTypes from 'prop-types';
 import appImg from '../images/fav32.png';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 //MUI Stuff
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import withStyles from '@material-ui/core/styles/withStyles';
 
 const styles = {
     form: {
@@ -24,13 +26,21 @@ const styles = {
         margin: '10px auto 10px auto'
     },
     button: {
-        marginTop: 20
+        marginTop: 20,
+        position: 'relative'
+    },
+    progress: {
+        position: 'absolute',
+        color: 'orange'
     },
     customError: {
         color: 'red',
-        fontSize: '0.8rem'
+        fontSize: '0.8rem',
+        margin: 10
     }
 }
+
+
 class login extends Component {
     constructor() {
         super();
@@ -52,7 +62,7 @@ class login extends Component {
         }
         axios.post('/login', userData)
             .then(res => {
-                console.log(res.data)
+                localStorage.setItem('FBIdToken', `Bearer ${res.data.token}`)
                 this.setState({
                     loading: false
                 });
@@ -81,6 +91,7 @@ class login extends Component {
                     <Typography variant='h2' className={classes.pageTitle}>
                         Login
                     </Typography>
+
                     <form noValidate onSubmit={this.handleSumbit}>
                         <TextField
                             id='email'
@@ -119,8 +130,16 @@ class login extends Component {
                             variant='contained'
                             color='primary'
                             className={classes.button}
-                        >Login
+                            disabled={loading}
+                        >
+                            {loading && (
+                                <CircularProgress size={25} className={classes.progress} />
+                            )}
+                            Login
                         </Button>
+                        <br />
+                        <br />
+                        <small>Dont have an account? signup <Link to='/signup'>here</Link></small>
                     </form>
                 </Grid>
                 <Grid item sm />

@@ -22,6 +22,9 @@ const styles = {
     content: {
         padding: 20,
         objectFit: 'cover',
+    },
+    blogTitle: {
+        textTransform: 'uppercase'
     }
 }
 
@@ -64,7 +67,7 @@ class Blog extends Component {
                         {dayjs(createdAt).fromNow()}
                     </Typography>
 
-                    <Typography variant='h4' color='textPrimary'>{title}</Typography>
+                    <Typography variant='h4' color='textPrimary' className={classes.blogTitle}>{title}</Typography>
 
                     <Typography variant='body1'>{body}</Typography>
 
