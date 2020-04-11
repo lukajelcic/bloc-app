@@ -1,11 +1,26 @@
 import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import Blog from '../components/Blog';
+import Profile from '../components/Profile';
+
+//MUI Stuff
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Grid from '@material-ui/core/Grid';
+import withStyles from '@material-ui/core/styles/withStyles';
+
+const styles = {
+    progress: {
+        color: 'orange',
+        positin: 'absolute'
+    }
+}
 
 class home extends Component {
-    state = {
-        blogs: null
+    constructor() {
+        super();
+        this.state = {
+            blogs: null
+        }
     }
     componentDidMount() {
         axios.get('/blogs')
@@ -13,26 +28,29 @@ class home extends Component {
                 this.setState({
                     blogs: res.data
                 })
+                console.log(res.status)
             })
             .catch(err => {
                 console.log(err);
             })
     }
     render() {
+        const { classes } = this.props
         let recentBlogs = this.state.blogs ? (
             this.state.blogs.map(blog => <Blog key={blog.blogId} blog={blog} />)
-        ) : <p>Loading ...</p>
+        ) : <CircularProgress size={60} className={classes.progress} />
+
         return (
             <Grid container>
-                <Grid item sm={8} xs={12}>
+                <Grid item sm={8} xs={12} >
                     {recentBlogs}
                 </Grid>
                 <Grid item sm={4} xs={12}>
-                    <p>Profile...</p>
+                    <Profile />
                 </Grid>
             </Grid>
         )
     }
 }
 
-export default home
+export default withStyles(styles)(home)
