@@ -87,7 +87,7 @@ class Blog extends Component {
             }
         } = this.props;
 
-        const { isOpened, isClicked } = this.state
+        const { isClicked } = this.state
         return (
             <Card className={classes.card}>
 

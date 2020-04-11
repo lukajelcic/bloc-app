@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
-import axios from 'axios';
 
 //REDUX
 import { connect } from 'react-redux';
@@ -22,6 +21,8 @@ import LocationOn from '@material-ui/icons/LocationOn';
 import LinkIcon from '@material-ui/icons/Link';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import EditIcon from '@material-ui/icons/Edit';
+// import KeyboardReturn from '@material-ui/icons/KeyboardReturn';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 //Styles
 const styles = {
@@ -76,6 +77,10 @@ const styles = {
 }
 
 class Profile extends Component {
+    constructor() {
+        super();
+        this.wrapper = React.createRef();
+    }
     handleImageChange = (event) => {
         const image = event.target.files[0];
         const formData = new FormData();
@@ -87,6 +92,10 @@ class Profile extends Component {
     handleEditPicture = () => {
         const fileInput = document.getElementById('imageInput')
         fileInput.click();
+    }
+
+    handleLogout = () => {
+        this.props.logoutUser();
     }
     render() {
         const {
@@ -101,6 +110,7 @@ class Profile extends Component {
         let profileMarkup = !loading ? (authenticated ? (
             <Paper
                 className={classes.paper}
+                ref={this.wrapper}
             >
                 <div className={classes.profile}>
                     <div className="image-wrapper">
@@ -146,13 +156,15 @@ class Profile extends Component {
                                 <hr />
                             </Fragment>
                         )}
-                        <CalendarToday color='primary'>
-                            <span>
-                                Joined:
-                                 {dayjs(createdAt).format('MM YYY')}
-                            </span>{' '}
-                            {createdAt}
-                        </CalendarToday>
+                        <Tooltip title='Logout' placement='top'>
+                            <IconButton onClick={this.handleLogout}>
+                                <ExitToAppIcon color='primary' />
+                            </IconButton>
+                        </Tooltip>
+                        <CalendarToday color='primary' />{' '}
+                        <span>
+                            Joined:{dayjs(createdAt).format('MM YYYY')}
+                        </span>
                     </div>
                 </div>
             </Paper>
@@ -176,7 +188,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapActionToProps = {
-    uploadImage
+    uploadImage,
+    logoutUser
 }
 Profile.protoTypes = {
     logoutUser: PropTypes.func.isRequired,
