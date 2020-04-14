@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Blog from '../components/Blog';
 import Profile from '../components/Profile';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { getPost } from '../redux/actions/dataActions';
 
 //MUI Stuff
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -23,21 +26,14 @@ class home extends Component {
         }
     }
     componentDidMount() {
-        axios.get('/blogs')
-            .then(res => {
-                this.setState({
-                    blogs: res.data
-                })
-                console.log(res.status)
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        this.props.getPost()
     }
     render() {
+        const { loading, blogs } = this.props.data
         const { classes } = this.props
-        let recentBlogs = this.state.blogs ? (
-            this.state.blogs.map(blog => <Blog key={blog.blogId} blog={blog} />)
+
+        let recentBlogs = !loading ? (
+            blogs.map(blog => <Blog key={blog.blogId} blog={blog} />)
         ) : <CircularProgress size={60} className={classes.progress} />
 
         return (
@@ -53,4 +49,12 @@ class home extends Component {
     }
 }
 
-export default withStyles(styles)(home)
+home.propTypes = {
+    getPost: PropTypes.func.isRequired,
+    data: PropTypes.object.isRequired
+}
+
+const mapStateToProps = state => ({
+    data: state.data
+})
+export default connect(mapStateToProps, { getPost })(withStyles(styles)(home));

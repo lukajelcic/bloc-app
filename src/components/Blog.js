@@ -3,15 +3,26 @@ import withstyles from '@material-ui/core/styles/withStyles';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import PropTypes from 'prop-types';
+
+//Redux
+import { connect } from 'react-redux';
+import { likePost, unlikePost } from '../redux/actions/dataActions';
 
 //MUI Stuff
 import Card from '@material-ui/core/Card';
+
+//Icons 
+import ChatIcon from '@material-ui/icons/Chat';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorder from '@material-ui/icons/FavoriteBorder';
+
 // import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import { Button } from '@material-ui/core';
+import MyButton from '../util/MyButton';
 
 const styles = {
     card: {
@@ -59,18 +70,41 @@ class Blog extends Component {
     constructor() {
         super();
         this.state = {
-            isOpened: false,
-            isClicked: false,
+            isClicked: false
+        }
+        this.likedPost = this.likedPost.bind(this);
+        this.likePost = this.likePost.bind(this);
+        this.unlikePost = this.unlikePost.bind(this);
+
+    }
+    likePost = () => {
+        this.props.likePost(this.props.blog.blogId)
+    }
+
+    unlikePost = () => {
+        this.props.unlikePost(this.props.blog.blogId)
+    }
+
+    likedPost = () => {
+        if (
+            this.props.user.likes &&
+            this.props.user.likes.find(
+                (like) => like.blogId === this.props.blog.blogId
+            )
+        )
+            return true;
+        else {
+            return false;
         }
     }
+
 
     toggleHandle = () => {
         this.setState({ isClicked: !this.state.isClicked })
     }
 
-
-
     render() {
+        const { isClicked } = this.state
         dayjs.extend(relativeTime)
         const {
             classes,
@@ -84,10 +118,30 @@ class Blog extends Component {
                 likeCount,
                 userImage,
                 blogImageUrl
+            },
+            user: {
+                authenticated
             }
         } = this.props;
 
-        const { isClicked } = this.state
+        const likeButton = !authenticated ? (
+            <MyButton tip='Like'>
+                <Link to='/login'>
+                    <FavoriteBorder color='primary' />
+                </Link>
+            </MyButton>
+        )
+            : (
+                this.likedPost() ? (
+                    <MyButton tip='Undo like' onClick={this.unlikePost}>
+                        <FavoriteIcon color='primary' />
+                    </MyButton>
+                ) : (
+                        <MyButton tip='Like' onClick={this.likePost}>
+                            <FavoriteBorder color='primary' />
+                        </MyButton>
+                    )
+            )
         return (
             <Card className={classes.card}>
 
@@ -118,6 +172,12 @@ class Blog extends Component {
                             <Typography variant='body1'>{body}</Typography>
                             : null}
                     </div>
+                    {likeButton}
+                    <span>{likeCount} Likes</span>
+                    <MyButton tip='Comments'>
+                        <ChatIcon color='primary' />
+                    </MyButton>
+                    <span>{commentCount} Comments</span>
 
                 </CardContent>
                 <div className={classes.btnWrapper}>
@@ -136,4 +196,20 @@ class Blog extends Component {
     }
 }
 
-export default withstyles(styles)(Blog)
+Blog.propTypes = {
+    user: PropTypes.object.isRequired,
+    likePost: PropTypes.func.isRequired,
+    unlikePost: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired
+}
+
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapActionsToProps = {
+    likePost,
+    unlikePost
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(withstyles(styles)(Blog));
