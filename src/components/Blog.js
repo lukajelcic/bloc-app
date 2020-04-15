@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import PropTypes from 'prop-types';
+import DeleteBlog from './DeleteBlog';
 
 //Redux
 import { connect } from 'react-redux';
@@ -26,6 +27,7 @@ import MyButton from '../util/MyButton';
 
 const styles = {
     card: {
+        position: 'relative',
         display: 'flex',
         height: 150,
         marginRight: 50,
@@ -72,10 +74,9 @@ class Blog extends Component {
         this.state = {
             isClicked: false
         }
-        this.likedPost = this.likedPost.bind(this);
+        this.isLikedPost = this.isLikedPost.bind(this);
         this.likePost = this.likePost.bind(this);
         this.unlikePost = this.unlikePost.bind(this);
-
     }
     likePost = () => {
         this.props.likePost(this.props.blog.blogId)
@@ -85,7 +86,7 @@ class Blog extends Component {
         this.props.unlikePost(this.props.blog.blogId)
     }
 
-    likedPost = () => {
+    isLikedPost = () => {
         if (
             this.props.user.likes &&
             this.props.user.likes.find(
@@ -98,13 +99,13 @@ class Blog extends Component {
         }
     }
 
-
     toggleHandle = () => {
         this.setState({ isClicked: !this.state.isClicked })
     }
 
     render() {
-        const { isClicked } = this.state
+        const { isClicked } = this.state;
+
         dayjs.extend(relativeTime)
         const {
             classes,
@@ -120,9 +121,14 @@ class Blog extends Component {
                 blogImageUrl
             },
             user: {
-                authenticated
+                authenticated,
+                credentials: { handle }
             }
         } = this.props;
+
+        const deleteButton = authenticated && userHandle === handle ? (
+            <DeleteBlog blogId={blogId} />
+        ) : null
 
         const likeButton = !authenticated ? (
             <MyButton tip='Like'>
@@ -132,7 +138,7 @@ class Blog extends Component {
             </MyButton>
         )
             : (
-                this.likedPost() ? (
+                this.isLikedPost() ? (
                     <MyButton tip='Undo like' onClick={this.unlikePost}>
                         <FavoriteIcon color='primary' />
                     </MyButton>
@@ -144,13 +150,11 @@ class Blog extends Component {
             )
         return (
             <Card className={classes.card}>
-
                 <Avatar
                     src={userImage}
                     alt='profile'
                     className={classes.avatar}
                 />
-
                 <CardContent className={classes.content}>
 
                     <Typography variant='h5'
@@ -178,6 +182,7 @@ class Blog extends Component {
                         <ChatIcon color='primary' />
                     </MyButton>
                     <span>{commentCount} Comments</span>
+                    {deleteButton}
 
                 </CardContent>
                 <div className={classes.btnWrapper}>
@@ -200,7 +205,8 @@ Blog.propTypes = {
     user: PropTypes.object.isRequired,
     likePost: PropTypes.func.isRequired,
     unlikePost: PropTypes.func.isRequired,
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    blog: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -209,7 +215,7 @@ const mapStateToProps = state => ({
 
 const mapActionsToProps = {
     likePost,
-    unlikePost
+    unlikePost,
 }
 
 export default connect(mapStateToProps, mapActionsToProps)(withstyles(styles)(Blog));

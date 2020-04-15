@@ -56,15 +56,15 @@ class EditDetails extends Component {
         this.mapUserDetailsToState(this.props.credentials);
     }
 
+    handleClose = () => {
+        this.setState({ open: false })
+    }
+
     handleChange = (event) => {
         event.preventDefault();
         this.setState({
             [event.target.name]: event.target.value
         })
-    }
-
-    handleClose = () => {
-        this.setState({ open: false })
     }
 
     handleSubmit = () => {
