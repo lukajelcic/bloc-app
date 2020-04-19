@@ -1,8 +1,18 @@
-import { LOADING_DATA, SET_POSTS, SET_POST, LIKE_POST, UNLIKE_POST, DELETE_POST } from '../types';
+import {
+    LOADING_DATA,
+    SET_POSTS,
+    POST_BLOG,
+    LIKE_POST,
+    UNLIKE_POST,
+    DELETE_POST,
+    SET_ERRORS,
+    CLEAR_ERRORS,
+    LOADING_UI
+} from '../types';
 
 import axios from 'axios';
 
-//Get all data
+//Get all posts
 export const getPost = () => dispatch => {
     dispatch({ type: LOADING_DATA });
     axios.get('/blogs')
@@ -16,6 +26,25 @@ export const getPost = () => dispatch => {
             dispatch({
                 type: SET_POSTS,
                 payload: []
+            })
+        })
+}
+
+//Post a Blog
+export const postBlog = (newBlog) => (dispatch) => {
+    dispatch({ type: LOADING_UI })
+    axios.post('/blog', newBlog)
+        .then(res => {
+            dispatch({
+                type: POST_BLOG,
+                payload: res.data
+            });
+            dispatch({ type: CLEAR_ERRORS });
+        })
+        .catch(err => {
+            dispatch({
+                type: SET_ERRORS,
+                payload: err.response.data
             })
         })
 }
@@ -55,3 +84,4 @@ export const deletePost = (blogId) => (dispatch) => {
             console.log(err)
         })
 }
+

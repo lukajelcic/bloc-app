@@ -144,7 +144,7 @@ class Blog extends Component {
                     </MyButton>
                 ) : (
                         <MyButton tip='Like' onClick={this.likePost}>
-                            <FavoriteBorder color='primary' />
+                            <FavoriteBorder color='secondary' />
                         </MyButton>
                     )
             )
@@ -162,7 +162,9 @@ class Blog extends Component {
                         to={`/users/${userHandle}`}
                         color='primary'
                         className={classes.handleName}
-                    >@{userHandle}
+                    >
+                        @{userHandle}
+
                     </Typography>
 
                     <Typography variant='body2'
@@ -185,6 +187,7 @@ class Blog extends Component {
                     {deleteButton}
 
                 </CardContent>
+
                 <div className={classes.btnWrapper}>
                     {!isClicked ?
                         <Button onClick={this.toggleHandle}

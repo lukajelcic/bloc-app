@@ -13,6 +13,7 @@ import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import HomeIcon from '@material-ui/icons/Home';
 import Notifications from '@material-ui/icons/Notifications';
+import PostBlog from './PostBlog';
 
 class Navbar extends Component {
 
@@ -23,9 +24,7 @@ class Navbar extends Component {
                 <Toolbar className='nav-container'>
                     {authenticated ? (
                         <Fragment>
-                            <MyButton tip='Post a bloc'>
-                                <AddIcon />
-                            </MyButton>
+                            <PostBlog />
 
                             <Link to='/'>
                                 <MyButton tip='Home page'>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import appImg from '../images/fav32.png';
-// import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 //MUI Stuff
@@ -53,6 +52,13 @@ class login extends Component {
             errors: {}
         }
     }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.UI.errors) {
+            this.setState({ errors: nextProps.UI.errors })
+        }
+    }
+
     handleSumbit = (event) => {
         event.preventDefault();
         const userData = {
@@ -153,4 +159,4 @@ const mapActionsToProps = {
     loginUser
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(login))
+export default connect(mapStateToProps, mapActionsToProps)(withStyles(styles)(login));
